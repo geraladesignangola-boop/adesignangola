@@ -1,0 +1,14 @@
+{
+  "name": "adesign-angola-landing",
+  "version": "1.0.0",
+  "description": "A-Design Angola Maintenance Landing Page",
+  "scripts": {
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:db:push": "npx supabase db push",
+    "supabase:db:reset": "npx supabase db reset"
+  },
+  "author": "A-Design Angola",
+  "license": "ISC"
+}

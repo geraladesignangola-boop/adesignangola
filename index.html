@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A-Design Angola. Soluções de design e tecnologia para igrejas, empresas e projetos criativos em Angola.">
+    <meta name="theme-color" content="#0D0D0D">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A-Design Angola">
+    <meta property="og:title" content="A-Design Angola — Em Construção">
+    <meta property="og:description" content="Estamos a construir o nosso espaço digital. Soluções de design e tecnologia para igrejas, empresas e projetos criativos em Angola.">
+    <meta property="og:image" content="images/logo.png">
+    <meta property="og:locale" content="pt_PT">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A-Design Angola — Em Construção">
+    <meta name="twitter:description" content="Estamos a construir o nosso espaço digital. Soluções de design e tecnologia para igrejas, empresas e projetos criativos em Angola.">
+    <meta name="twitter:image" content="images/logo.png">
+
+    <link rel="apple-touch-icon" href="images/logo.png">
+        <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data:; frame-ancestors 'none'">
+    <title>A-Design Angola</title>
+    <link rel="icon" type="image/svg+xml" href="images/icone.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lufga:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <noscript>
+        <div style="padding: 1rem; background: #EF4444; color: #fff; text-align: center; font-family: sans-serif;">
+            Por favor, ative o JavaScript para utilizar todas as funcionalidades deste website.
+        </div>
+    </noscript>
+
+    <div class="split">
+        <div class="panel-left">
+            <div class="panel-left-bg"></div>
+            <div class="left-pattern"></div>
+            <div class="left-content">
+                <div class="left-logo">
+                    <strong>A-Design</strong>
+                    Angola
+                </div>
+                <div class="left-line"></div>
+                <div class="left-year">Desde 2024</div>
+            </div>
+        </div>
+        <div class="panel-right">
+            <div class="right-inner">
+                <div class="logo-sm"><img src="images/logo.png" alt="A-Design Angola" /></div>
+
+                <div class="badge"><span class="badge-dot"></span> Em Construção</div>
+
+                <h1>Estamos a preparar<br>algo <span class="text-accent">novo</span>.</h1>
+
+                <p class="body-text">
+                    Grandes ideias merecem tempo. Estamos a construir o nosso espaço digital com o <em>mesmo cuidado</em> que dedicamos a cada projeto dos nossos clientes.
+                </p>
+                <p class="body-text">
+                    Soluções de design e tecnologia para <em>igrejas, empresas e projetos</em> criativos em Angola.
+                </p>
+
+                <div class="contact-line">
+                    <button type="button" class="wa-trigger" data-open-wa><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> WhatsApp</button>
+                    <a href="mailto:geral.adesign.angola@gmail.com"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> geral.adesign.angola@gmail.com
+</a>
+                    <span><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Luanda</span>
+                </div>
+
+                <div class="notify-block" id="notifyBlock">
+                    <form class="cta" id="notifyForm" novalidate>
+                        <input type="email" id="notifyEmail" placeholder="O seu e-mail para novidades" required autocomplete="email">
+                        <button type="submit" id="notifyBtn">AVISAR-ME</button>
+                    </form>
+                    <p class="notify-privacy">Só enviamos um email no lançamento. Sem spam.</p>
+                    <div class="notify-feedback" id="notifyFeedback" aria-live="polite"></div>
+                </div>
+
+                <div class="foot-note">© 2026 A-Design Angola · Todos os direitos reservados.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="waModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-labelledby="waModalTitle" aria-modal="true">
+            <div class="modal-head">
+                <div class="modal-title" id="waModalTitle">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    Falar no WhatsApp
+                </div>
+                <button type="button" class="modal-close" data-close-wa aria-label="Fechar">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="wa-number-row">
+                <div class="wa-number-label">
+                    <small>Número</small>
+                    <span id="waNumber">+244 941 679 799</span>
+                </div>
+                <button type="button" class="copy-btn" id="copyWaBtn" aria-label="Copiar número">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span class="copy-label" aria-live="polite">Copiar</span>
+                </button>
+            </div>
+
+            <label class="modal-label" for="waMessage">Mensagem</label>
+            <textarea id="waMessage" class="modal-textarea" placeholder="Escreva a sua mensagem...">Olá A-Design! Gostaria de saber mais sobre os vossos serviços.</textarea>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-close-wa>Cancelar</button>
+                <button type="button" class="btn-primary" id="sendWaBtn">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
