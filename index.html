@@ -7,95 +7,90 @@
 <meta name="description" content="Curso completo de Design Gráfico: 3 fases, 18 módulos. Domine Illustrator, Photoshop e Affinity Designer do zero até profissional.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/src/styles/main.css">
 </head>
 <body>
 
-<header>
-  <div class="container nav-bar">
-    <a href="#" class="logo">
-      <img src="/src/assets/LOGO_1.png" alt="Academy Logo" style="height:42px;width:auto">
-    </a>
-    <nav class="menu" id="menu">
-      <a href="#inicio">Início</a>
-      <a href="#curso">O Curso</a>
-      <a href="#grade">Estrutura</a>
-      <a href="#instrutor">Instrutor</a>
-      <a href="#preco" class="btn btn-primary nav-cta">Matricule-se</a>
-    </nav>
-    <button class="menu-btn" id="mbtn" aria-label="Menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-    </button>
-  </div>
-  <div class="menu-overlay" id="menuOverlay"></div>
-</header>
+<nav class="nav" id="pillNav" aria-label="Navegação principal">
+  <a href="#inicio" class="nav-brand"><img src="/src/assets/LOGO_1.png" alt="A.Academy"></a>
+  <a href="#inicio">Home</a>
+  <a href="#grade">Programa</a>
+  <a href="#instrutor">Formador</a>
+  <a href="#preco">Planos</a>
+  <a href="#inscricao">Inscrição</a>
+</nav>
 
-<section class="hero" id="inicio">
-  <svg class="tri" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <g fill="#1fa04a">
-      <polygon points="0,0 180,0 0,220" opacity=".08"/><polygon points="180,0 380,0 240,160" opacity=".05"/>
-      <polygon points="0,220 240,160 120,380" opacity=".06"/><polygon points="1260,0 1440,0 1440,240" opacity=".10"/>
-      <polygon points="1120,0 1260,0 1180,140" opacity=".06"/><polygon points="1440,240 1300,340 1440,470" opacity=".07"/>
-      <polygon points="0,800 260,800 90,620" opacity=".10"/><polygon points="90,620 260,800 320,560" opacity=".06"/>
-      <polygon points="1180,800 1440,800 1440,560" opacity=".08"/><polygon points="1180,800 1440,560 1080,660" opacity=".05"/>
-      <polygon points="520,110 660,60 640,200" opacity=".05"/><polygon points="840,90 980,150 900,240" opacity=".06"/>
-      <polygon points="380,520 520,470 470,610" opacity=".05"/><polygon points="960,520 1100,560 1000,660" opacity=".06"/>
-    </g>
-    <g fill="#8fd14f">
-      <polygon points="640,700 780,660 760,790" opacity=".14"/><polygon points="60,420 160,380 130,500" opacity=".16"/>
-      <polygon points="1320,620 1420,580 1390,720" opacity=".14"/>
-    </g>
-  </svg>
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <p class="hero-overline">FORMAÇÃO 100% PRÁTICA DE</p>
-      <h1>
-        <span class="hero-title-box">
-          <span class="l1">DESIGN</span> <span class="l2">GRÁFICO</span>
-        </span>
-      </h1>
-      <p class="hero-subtitle">Você não precisa de mais tutoriais. Precisa entender por que um design funciona.</p>
-      <p class="hero-desc">Uma formação em Design Gráfico para quem quer construir fundamento, desenvolver pensamento visual e aprender a transformar problemas de comunicação em soluções de design — com prática, projetos e orientação.</p>
-      <div class="hero-info">
-        <div class="hi-dark">
-          <span class="hi-num">30</span>
-          <span class="hi-lbl">DIAS</span>
-        </div>
-        <div class="hi-mid">
-          <span class="hi-num">3</span>
-          <span class="hi-lbl">MÓDULOS</span>
-        </div>
-        <div class="hi-lime">
-          <svg class="hi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span class="hi-time">15H30<br>AS 17H30</span>
-        </div>
+<main class="hero" id="inicio">
+  <div class="rings" aria-hidden="true"></div>
+
+  <div class="shell">
+    <section class="copy" aria-label="Curso de Design Gráfico">
+      <p class="eyebrow">FORMAÇÃO 100% PRÁTICA DE</p>
+      <h1>DESIGN GRÁFICO</h1>
+      <div class="subtitle">
+        <span>DO ZERO AO</span>
+        <em>profissional</em>
       </div>
-    </div>
-  </div>
-</section>
+      <div class="hero-info">
+        <div class="hero-location" id="heroLocation">
+          <span class="hero-check"></span>
+          <span id="heroLocalText"></span>
+        </div>
+        <span class="hero-dot">·</span>
+        <span class="hero-status" id="heroStatus"></span>
+        <span class="hero-dot hero-dot-confirm" id="heroDotDate" style="display:none"></span>
+        <span class="hero-datetime" id="heroDateTime" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="heroDateText"></span>
+        </span>
+      </div>
+      <a href="curso.html" class="btn btn-primary hero-btn">Saber mais sobre o curso
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </section>
 
-<section id="curso" class="band tri-bg-green">
+    <img
+      class="portrait"
+      src="/src/assets/modelo.png"
+      alt="Retrato do formador"
+      draggable="false"
+    >
+    <div class="portrait-circle" aria-hidden="true"></div>
+  </div>
+</main>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<button class="menu-button" id="mbtn" aria-label="Abrir menu" aria-expanded="false" type="button">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+    <path d="M4 7h16M4 12h16M4 17h16"/>
+  </svg>
+</button>
+
+<section id="curso" class="band">
+  <div class="section-glow section-glow--top"></div>
+  <div class="section-glow section-glow--right"></div>
   <div class="container">
-    <span class="overline" style="color:#fff">Por que este curso</span>
-    <h2 class="sec" style="color:var(--lime)">3 fases que transformam<br>iniciantes em profissionais</h2>
-    <p class="sub" style="color:#e8f5e9">Uma jornada estruturada dos fundamentos ao mercado: aprender a ver, criar, comunicar, construir marcas e trabalhar com design profissional.</p>
+    <span class="overline">Por que este curso</span>
+    <h2 class="sec">3 fases que transformam<br>iniciantes em profissionais</h2>
+    <p class="sub">Uma jornada estruturada dos fundamentos ao mercado: aprender a ver, criar, comunicar, construir marcas e trabalhar com design profissional.</p>
     <div class="grid-4">
-      <article class="feat reveal" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
-        <div class="fi" style="background:rgba(143,209,79,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--lime)"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
-        <h3 style="color:var(--lime)">Do zero ao pro</h3><p style="color:#e8f5e9">Comece sem saber nada e evolua módulo a módulo, com uma trajetória clara e sem enrolação.</p>
+      <article class="feat reveal">
+        <div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+        <h3>Do zero ao pro</h3><p>Comece sem saber nada e evolua módulo a módulo, com uma trajetória clara e sem enrolação.</p>
       </article>
-      <article class="feat reveal" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
-        <div class="fi" style="background:rgba(143,209,79,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--lime)"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
-        <h3 style="color:var(--lime)">Método prático</h3><p style="color:#e8f5e9">Cada aula termina em um exercício real: logo, post, banner, flyer e identidade completa.</p>
+      <article class="feat reveal">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+        <h3>Método prático</h3><p>Cada aula termina em um exercício real: logo, post, banner, flyer e identidade completa.</p>
       </article>
-      <article class="feat reveal" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
-        <div class="fi" style="background:rgba(143,209,79,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--lime)"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-        <h3 style="color:var(--lime)">3 ferramentas profissionais</h3><p style="color:#e8f5e9">Illustrator, Photoshop e Affinity Designer — as ferramentas mais usadas no mercado.</p>
+      <article class="feat reveal">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <h3>3 ferramentas profissionais</h3><p>Illustrator, Photoshop e Affinity Designer — as ferramentas mais usadas no mercado.</p>
       </article>
-      <article class="feat reveal" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
-        <div class="fi" style="background:rgba(143,209,79,.2)"><svg viewBox="0 0 24 24" style="stroke:var(--lime)"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
-        <h3 style="color:var(--lime)">Portfólio real</h3><p style="color:#e8f5e9">Conclua as 3 fases com um portfólio de projetos reais, pronto para mostrar a clientes.</p>
+      <article class="feat reveal">
+        <div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+        <h3>Portfólio real</h3><p>Conclua as 3 fases com um portfólio de projetos reais, pronto para mostrar a clientes.</p>
       </article>
     </div>
   </div>
@@ -123,6 +118,8 @@
 </section>
 
 <section id="grade" class="band tri-bg">
+  <div class="section-glow section-glow--center"></div>
+  <div class="section-rings section-rings--right"></div>
   <div class="container">
     <span class="overline">Estrutura do curso</span>
     <h2 class="sec">3 Fases — Do Zero ao Profissional</h2>
@@ -217,6 +214,7 @@
 </section>
 
 <section id="jornada">
+  <div class="section-glow section-glow--center"></div>
   <div class="container">
     <span class="overline">Como funciona</span>
     <h2 class="sec">A tua jornada de inscrição</h2>
@@ -252,6 +250,7 @@
 </section>
 
 <section id="publico" class="band tri-bg">
+  <div class="section-glow section-glow--left"></div>
   <div class="container">
     <span class="overline">Para quem é este curso</span>
     <h2 class="sec">Feito para perfis diferentes, com o mesmo método</h2>
@@ -277,10 +276,12 @@
   </div>
 </section>
 
-<section id="instrutor" class="band tri-bg-green">
+<section id="instrutor" class="band">
+  <div class="section-glow section-glow--left"></div>
+  <div class="section-rings section-rings--left"></div>
   <div class="container">
-    <span class="overline" style="color:#fff">Quem ensina</span>
-    <h2 class="sec" style="color:var(--lime)">O teu professor</h2>
+    <span class="overline">Quem ensina</span>
+    <h2 class="sec">O teu professor</h2>
     <div class="professor">
       <div class="prof-card reveal">
         <div class="prof-photo">
@@ -318,37 +319,27 @@
 </section>
 
 <section id="preco" class="band tri-bg">
+  <div class="section-glow section-glow--center"></div>
+  <div class="section-rings section-rings--right"></div>
   <div class="container">
     <span class="overline">Investimento</span>
     <h2 class="sec">Investe na tua evolução profissional</h2>
     <p class="sub">Acesso à formação completa, prática e orientação para construíres um portfólio real.</p>
 
-    <div class="price-wrap">
-      <div class="price reveal">
-        <span class="tag">VAGA NA TURMA</span>
-        <span class="p-old">Formação completa</span>
-        <div class="p-new">Kz <span id="landingPrice">45.000</span></div>
-        <p class="p-parcel">ou <b id="landingInstallments">3x de Kz 15.000</b> sem juros</p>
-        <ul>
-          <li>30 dias de formação prática</li>
-          <li>3 fases, 18 módulos e projeto final</li>
-          <li>Illustrator, Photoshop e Affinity Designer</li>
-          <li>Portfólio pronto para apresentar</li>
-        </ul>
-        <a href="#inscricao" class="btn btn-primary">Quero me inscrever agora
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-        <p class="guarantee"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>Pagamento integral ou parcelado</p>
-      </div>
-    </div>
+    <div class="price-wrap" id="priceCards"></div>
   </div>
 </section>
 
 <section id="inscricao" class="tri-bg">
+  <div class="section-glow section-glow--center"></div>
   <div class="container">
     <span class="overline">Inscrição</span>
     <h2 class="sec">Garanta a sua vaga</h2>
     <p class="sub">Preenche o formulário — ao submeter, vais receber imediatamente o IBAN e o número de WhatsApp para enviares o comprovativo.</p>
+    <div id="preEnrollBanner" class="pre-enroll-banner" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+      <p><b>Nota:</b> A data e localização do curso serão confirmadas em breve. Podes inscrever-te agora e receberás a confirmação por WhatsApp.</p>
+    </div>
     <p class="sub" id="enrollmentStatus" hidden></p>
 
     <form class="reg-form" id="regForm">
@@ -365,7 +356,7 @@
       <div class="rf-step-panel active" data-panel="1">
         <h3 class="rf-step-title">Como te descreves?</h3>
         <p class="rf-step-desc">Escolhe a opção que melhor te representa para personalizarmos a tua experiência.</p>
-        <div class="profile-select" id="profileSelect">
+        <div class="profile-select">
           <button type="button" class="pchip" data-profile="igreja">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16l8-4 8 4V4a2 2 0 0 0-2-2Z"/><path d="m12 8-4 4"/><path d="m12 8 4 4"/></svg>
             Igreja / Ministério
@@ -492,8 +483,23 @@
       </div>
 
       <div class="rf-step-panel" data-panel="4">
-        <h3 class="rf-step-title">Como vais pagar?</h3>
-        <p class="rf-step-desc">Escolhe a forma de pagamento que te fica mais conveniente.</p>
+        <h3 class="rf-step-title">Escolhe o teu pacote</h3>
+        <p class="rf-step-desc">Seleciona o pacote ideal para ti e, se tiveres, aplica o teu código de parceria.</p>
+
+        <div class="rf-row">
+          <label>Pacote *</label>
+          <div class="pay-options" id="packageOptions">
+          </div>
+        </div>
+
+        <div class="rf-row">
+          <label>Código de parceria (Fé Kreativa) — opcional</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="codigoParceria" placeholder="Ex: IGREJA-BAIRRO" style="flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid var(--card-border);background:var(--card);color:var(--cream);font-size:0.85rem">
+            <button type="button" class="btn btn-ghost" id="btnAplicarCodigo" style="white-space:nowrap;font-size:0.8rem;padding:8px 14px">Aplicar</button>
+          </div>
+          <small id="codigoParceriaMsg" style="margin-top:4px;display:none"></small>
+        </div>
 
         <div class="rf-row">
           <label>Como conheceste o curso?</label>
@@ -503,8 +509,8 @@
         <div class="rf-row">
           <label>Forma de pagamento *</label>
           <div class="pay-options" id="payOptions">
-            <label class="pay-opt selected"><input type="radio" name="pagamento" value="integral" checked><span><b id="payIntegralLabel">Pagamento integral</b><small id="payIntegralDetail">Kz 45.000 de uma vez</small></span></label>
-            <label class="pay-opt"><input type="radio" name="pagamento" value="parcelado"><span><b id="payParceladoLabel">3x sem juros</b><small id="payParceladoDetail">3 parcelas de Kz 15.000</small></span></label>
+            <label class="pay-opt selected"><input type="radio" name="pagamento" value="integral" checked><span><b>Pagamento integral</b><small id="payIntegralDetail">—</small></span></label>
+            <label class="pay-opt"><input type="radio" name="pagamento" value="parcelado"><span><b id="payParceladoLabel">Parcelado</b><small id="payParceladoDetail">—</small></span></label>
           </div>
         </div>
 
@@ -534,27 +540,47 @@
       <div class="ns-card reveal">
         <svg class="ns-check" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <h3>Inscrição recebida!</h3>
-        <p>Falta só um passo. Segue estas instruções para garantires a tua vaga:</p>
-        <div class="ns-grid">
-          <div class="ns-item">
-            <span class="ns-label">1. Transfere o valor para</span>
-            <div class="ns-value-row"><b class="ns-iban" id="nsIban">AO06 0055 0000 0856 1941 0152</b><button type="button" class="ns-copy" data-copy-target="nsIban" aria-label="Copiar IBAN">Copiar</button></div>
-            <small id="nsTitular">Titular: Adilson Amado — Comércio e Prestação de Serviços</small>
+        <div class="ns-amount" id="nsAmountBox" hidden>
+          <span class="ns-amount-value" id="nsAmount">—</span>
+          <span class="ns-amount-pkg" id="nsPkgName">—</span>
+        </div>
+        <div class="ns-methods" id="nsMethods">
+          <div class="ns-method" id="nsMethodIban" hidden>
+            <span class="ns-method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+            <div class="ns-method-info">
+              <span class="ns-method-title">Transferência / Depósito</span>
+              <div class="ns-value-row"><b id="nsIban">—</b><button type="button" class="ns-copy" data-copy-target="nsIban">Copiar</button></div>
+              <small id="nsTitular">—</small>
+            </div>
           </div>
-          <div class="ns-item">
-            <span class="ns-label">2. Envia o comprovativo + o teu nome completo</span>
-            <div class="ns-value-row"><b class="ns-wpp" id="nsWhatsapp">941 679 799</b><button type="button" class="ns-copy" data-copy-target="nsWhatsapp" aria-label="Copiar WhatsApp">Copiar</button></div>
-            <small>Via WhatsApp — usa o mesmo nome com que te inscreveste</small>
-            <a class="ns-whatsapp-link" id="nsWhatsappLink" href="#" target="_blank" rel="noopener">Abrir WhatsApp para enviar comprovativo</a>
+          <div class="ns-method" id="nsMethodExpress" hidden>
+            <span class="ns-method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <div class="ns-method-info">
+              <span class="ns-method-title">Multicaixa Express</span>
+              <div class="ns-value-row"><b id="nsExpress">—</b><button type="button" class="ns-copy" data-copy-target="nsExpress">Copiar</button></div>
+              <small id="nsExpressNome">—</small>
+            </div>
+          </div>
+          <div class="ns-method" id="nsMethodPaypal" hidden>
+            <span class="ns-method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></span>
+            <div class="ns-method-info">
+              <span class="ns-method-title">PayPal</span>
+              <div class="ns-value-row"><b id="nsPaypal">—</b><button type="button" class="ns-copy" data-copy-target="nsPaypal">Copiar</button></div>
+            </div>
           </div>
         </div>
-        <p class="ns-code">O teu código de referência: <b id="refCode">—</b> — guarda-o para consultares o estado da tua inscrição.</p>
+        <a class="ns-whatsapp-link" id="nsWhatsappLink" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar comprovativo via WhatsApp
+        </a>
+        <p class="ns-code">Ref: <b id="refCode">—</b></p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="band tri-bg">
+<section class="band tri-bg" id="faq-section">
+  <div class="section-glow section-glow--center"></div>
   <div class="container">
     <span class="overline">Dúvidas frequentes</span>
     <h2 class="sec">Perguntas &amp; respostas</h2>
@@ -570,12 +596,13 @@
 </section>
 
 <section class="band tri-bg" id="consultar">
+  <div class="section-glow section-glow--center"></div>
   <div class="container">
     <span class="overline">Consulta</span>
     <h2 class="sec">Verificar estado da inscrição</h2>
     <p class="sub">Insere o teu código de referência para saber se a tua inscrição já foi aprovada.</p>
 
-    <div class="check-form reveal" id="checkForm">
+    <div class="check-form reveal">
       <div class="check-input-wrap">
         <input type="text" id="checkCode" placeholder="Ex: ADG-2026-4821" maxlength="14" autocomplete="off">
         <button type="button" class="btn btn-primary" id="checkBtn">
@@ -601,7 +628,7 @@
 <section>
   <div class="container">
     <div class="cta">
-      <svg class="tri" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice"><g fill="#8fd14f"><polygon points="0,400 200,320 100,400" opacity=".12"/><polygon points="1000,0 1200,0 1200,160" opacity=".12"/><polygon points="520,40 620,0 600,110" opacity=".10"/></g></svg>
+      <svg class="tri" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice"><g fill="#ff4a12"><polygon points="0,400 200,320 100,400" opacity=".08"/><polygon points="1000,0 1200,0 1200,160" opacity=".08"/><polygon points="520,40 620,0 600,110" opacity=".06"/></g></svg>
       <div class="cta-in">
         <h2>A tua jornada no design começa aqui</h2>
         <p>30 dias, 3 módulos, 2 ferramentas dominadas e um portfólio pronto. Vagas limitadas da turma aberta.</p>
@@ -611,19 +638,8 @@
   </div>
 </section>
 
-<footer class="tri-bg-dark">
+<footer>
   <div class="container">
-    <div class="f-grid">
-      <div>
-        <div class="f-logo">
-          <img src="/src/assets/LOGO_2.png" alt="Academy Logo" style="height:50px;width:auto">
-        </div>
-        <p>Formação prática em Design Gráfico: do zero ao profissional em 30 dias, com Illustrator, Photoshop e Affinity Designer.</p>
-      </div>
-      <div><h4>O curso</h4><a href="#curso">Visão geral</a><a href="#grade">Grade completa</a><a href="#jornada">Como funciona</a><a href="#inscricao">Inscrição</a></div>
-      <div><h4>Conteúdo</h4><a href="#ferramentas">Illustrator</a><a href="#ferramentas">Photoshop</a><a href="#ferramentas">Affinity Designer</a><a href="#publico">Para quem é</a></div>
-      <div><h4>Contacto</h4><a href="https://wa.me/244941679799">WhatsApp</a><a href="mailto:adesign.angola@gmail.com">E-mail</a><a href="https://instagram.com/a.adesignangola">Instagram</a></div>
-    </div>
     <div class="f-bottom">
       <span>Copyright © 2026 A.Academy — A-Design Angola. Todos os direitos reservados.</span>
       <span>Desenhamos a sua ideia.</span>

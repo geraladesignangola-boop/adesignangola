@@ -4,3 +4,27 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Redirect root to /akreative/
+[[redirects]]
+  from = "/"
+  to = "/akreative/"
+  status = 301
+
+# SPA fallback for /akreative/*
+[[redirects]]
+  from = "/akreative/*"
+  to = "/akreative/index.html"
+  status = 200
+
+# Serve admin.html for /akreative/admin
+[[redirects]]
+  from = "/akreative/admin"
+  to = "/akreative/admin.html"
+  status = 200
+
+# Serve curso.html for /akreative/curso
+[[redirects]]
+  from = "/akreative/curso"
+  to = "/akreative/curso.html"
+  status = 200

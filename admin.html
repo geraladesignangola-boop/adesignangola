@@ -2,22 +2,32 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#143d29">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>A.Academy — Painel Administrativo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/src/styles/admin.css">
 </head>
 <body>
 
 <div id="loginScreen" class="login-wrap">
   <div class="login-box">
-    <h1>A.Academy — Painel</h1>
+    <div class="login-brand">
+      <span class="cap">A</span>
+      <div>
+        <h1>A.Academy</h1>
+        <p style="margin:0">Painel administrativo</p>
+      </div>
+    </div>
     <p>Entrar com credenciais de administrador.</p>
-    <div class="fg"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@aacademy.ao"></div>
-    <div class="fg"><label>Palavra-passe</label><input type="password" id="loginPass" placeholder="••••••••"></div>
-    <button class="btn btn-primary" onclick="AuthUI.handleLogin()" style="width:100%;justify-content:center;margin-top:8px">Entrar</button>
+    <div class="fg"><label for="loginEmail">Email</label><input type="email" id="loginEmail" placeholder="admin@aacademy.ao" autocomplete="username"></div>
+    <div class="fg"><label for="loginPass">Palavra-passe</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"></div>
+    <button type="button" class="btn btn-primary" onclick="AuthUI.handleLogin()" style="width:100%;justify-content:center;margin-top:8px">Entrar</button>
     <p class="login-error" id="loginError">Credenciais inválidas.</p>
   </div>
 </div>
@@ -45,7 +55,7 @@
         <span class="avatar" id="userAvatar">AD</span>
         <b id="userName">Admin</b>
       </span>
-      <button class="btn-logout" onclick="AuthUI.handleLogout()">Sair</button>
+      <button type="button" class="btn-logout" onclick="AuthUI.handleLogout()">Sair</button>
     </div>
   </header>
 
@@ -55,8 +65,63 @@
     <a onclick="App.go('presenca')">Presença</a>
     <a onclick="App.go('settings')">Definições</a>
     <a onclick="App.go('reports')">Relatórios</a>
+    <a onclick="App.go('parcerias')" id="navParceriasTop">Parcerias</a>
+    <a onclick="App.go('curso')" id="navCursoTop">Curso</a>
+    <a onclick="App.go('pacotes')" id="navPacotesTop">Pacotes</a>
   </nav>
   <div class="mainnav-overlay" id="mainnavOverlay"></div>
+
+  <!-- Side Drawer for Mobile -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <nav class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+      <span class="drawer-avatar" id="drawerAvatar">AD</span>
+      <div class="drawer-user">
+        <b id="drawerUserName">Admin</b>
+        <span class="drawer-role" id="drawerRole">Administrador</span>
+      </div>
+    </div>
+    <div class="drawer-nav">
+      <a class="drawer-nav-item active" onclick="App.go('dashboard'); App.closeDrawer();" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('inscricoes'); App.closeDrawer();" data-page="inscricoes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Inscritos</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('presenca'); App.closeDrawer();" data-page="presenca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Presença</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('settings'); App.closeDrawer();" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Definições</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('reports'); App.closeDrawer();" data-page="reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="10" y2="21"/><line x1="14" y1="9" x2="14" y2="21"/></svg>
+        <span>Relatórios</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('parcerias'); App.closeDrawer();" data-page="parcerias" id="navParcerias">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <span>Parcerias</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('curso'); App.closeDrawer();" data-page="curso" id="navCurso">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>Curso</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('pacotes'); App.closeDrawer();" data-page="pacotes" id="navPacotes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Pacotes</span>
+      </a>
+    </div>
+    <div class="drawer-footer">
+      <button class="drawer-logout" onclick="AuthUI.handleLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sair</span>
+      </button>
+    </div>
+  </nav>
 
   <!-- Bottom Navigation for Mobile -->
   <nav class="bottom-nav" id="bottomNav">
@@ -83,6 +148,18 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="10" y2="21"/><line x1="14" y1="9" x2="14" y2="21"/></svg>
         <span>Relatórios</span>
       </a>
+      <a href="#" class="bottom-nav-item" onclick="App.go('parcerias'); return false;" data-page="parcerias" id="navParceriasBottom">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <span>Parcerias</span>
+      </a>
+      <a href="#" class="bottom-nav-item" onclick="App.go('curso'); return false;" data-page="curso" id="navCursoBottom">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>Curso</span>
+      </a>
+      <a href="#" class="bottom-nav-item" onclick="App.go('pacotes'); return false;" data-page="pacotes" id="navPacotesBottom">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>Pacotes</span>
+      </a>
     </div>
   </nav>
 
@@ -90,7 +167,7 @@
 
   <footer>
     <span>Copyright © 2026 A.Academy — A-Design Angola. Todos os direitos reservados.</span>
-    <span>Painel administrativo • v2.0</span>
+    <span>Painel administrativo • v3.0</span>
   </footer>
 </div>
 

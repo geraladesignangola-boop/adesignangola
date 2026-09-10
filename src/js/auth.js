@@ -78,9 +78,5 @@ export const Auth = {
 
   isAdmin() {
     return this.currentUser?.role === 'admin'
-  },
-
-  isOperador() {
-    return ['admin', 'operador'].includes(this.currentUser?.role)
   }
 }
