@@ -181,7 +181,7 @@ document.querySelectorAll('.grid-4,.journey,.prof-stats,.phases,.faq').forEach(g
 function animateCounter(el,target,duration=1500){
   const start=0;
   const startTime=performance.now();
-  const suffix=el.textContent.replace(/[\d,\.]/g,'');
+  const suffix=el.textContent.replace(/[\d,\.+]/g,'');
   const hasPlus=el.textContent.includes('+');
   
   function update(currentTime){

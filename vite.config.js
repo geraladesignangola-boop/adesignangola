@@ -10,7 +10,9 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         admin: resolve(__dirname, 'admin.html'),
-        curso: resolve(__dirname, 'curso.html')
+        curso: resolve(__dirname, 'curso.html'),
+        privacidade: resolve(__dirname, 'privacidade.html'),
+        cookies: resolve(__dirname, 'cookies.html')
       }
     }
   },

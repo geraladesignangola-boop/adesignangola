@@ -1,0 +1,201 @@
+.cc-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: rgba(18, 18, 18, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 20px 24px;
+  transform: translateY(0);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+.cc-banner.cc-hidden {
+  transform: translateY(110%);
+  pointer-events: none;
+}
+.cc-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.cc-text {
+  flex: 1;
+  min-width: 280px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.cc-text a {
+  color: var(--accent, #ff4a12);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cc-text a:hover {
+  color: #ff6b3d;
+}
+.cc-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.cc-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.cc-btn-accept {
+  background: var(--accent, #ff4a12);
+  color: #fff;
+}
+.cc-btn-accept:hover {
+  background: #ff6b3d;
+  transform: translateY(-1px);
+}
+.cc-btn-reject {
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+.cc-btn-reject:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+.cc-btn-settings {
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  padding: 10px 12px;
+}
+.cc-btn-settings:hover {
+  color: #fff;
+}
+
+/* Modal de preferências */
+.cc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cc-modal-overlay.cc-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.cc-modal-overlay:not(.cc-hidden) {
+  opacity: 1;
+}
+.cc-modal {
+  background: #1e1e1e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 28px;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+.cc-modal-overlay:not(.cc-hidden) .cc-modal {
+  transform: scale(1);
+}
+.cc-modal h3 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  color: #fff;
+}
+.cc-modal p {
+  margin: 0 0 20px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+}
+.cc-category {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.cc-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cc-category-header span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+.cc-category-desc {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.cc-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.cc-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.cc-switch .cc-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.cc-switch .cc-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.cc-switch input:checked + .cc-slider {
+  background: var(--accent, #ff4a12);
+}
+.cc-switch input:checked + .cc-slider::before {
+  transform: translateX(18px);
+}
+.cc-switch input:disabled + .cc-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cc-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}

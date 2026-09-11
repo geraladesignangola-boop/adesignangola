@@ -32,6 +32,8 @@ const DB={
     if(configuracoesError)throw configuracoesError;
     const {data: sessoes,error: sessoesError} = await supabase.from('presencas_sessoes').select('*,presencas_registos(*)').order('data', {ascending:false});
     if(sessoesError)throw sessoesError;
+    const {data: turmas,error: turmasError} = await supabase.from('turmas').select('*').order('ordem');
+    if(turmasError)console.error('Erro ao carregar turmas:',turmasError);
     this._data = {
       inscricoes: inscricoes || [],
       configuracoes,
@@ -40,7 +42,8 @@ const DB={
         id:s.id,titulo:s.titulo,data:s.data,criado_em:s.criado_em,criado_por:s.criado_por,
         presentes:(s.presencas_registos||[]).filter(r=>r.presente).map(r=>r.inscricao_id),
         ausentes:(s.presencas_registos||[]).filter(r=>!r.presente).map(r=>r.inscricao_id)
-      }))
+      })),
+      turmas: turmas || []
     };
     this.save();
     return this._data;
@@ -194,8 +197,8 @@ function avColor(n){const c=['#1e3a5f','#1e88e5','#ec407a','#fb8c00','#7e57c2','
 // ============================================================
 const App={
   currentRoute:'dashboard',_detailId:null,
-  go(r){this.closeModal();this.currentRoute=r;document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));const i=['dashboard','inscricoes','presenca','settings','reports','parcerias','curso','pacotes'].indexOf(r);const n=document.querySelectorAll('.mainnav a');if(i>=0&&n[i])n[i].classList.add('active');document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));const bottomItem=document.querySelector(`.bottom-nav-item[data-page="${r}"]`);if(bottomItem)bottomItem.classList.add('active');document.querySelectorAll('.drawer-nav-item').forEach(d=>d.classList.remove('active'));const drawerItem=document.querySelector(`.drawer-nav-item[data-page="${r}"]`);if(drawerItem)drawerItem.classList.add('active');this.render()},
-  render(){const c=document.getElementById('app-content');c.innerHTML='';switch(this.currentRoute){case'dashboard':c.appendChild(Modules.dashboard());break;case'inscricoes':c.appendChild(Modules.inscricoes());break;case'inscricao':c.appendChild(Modules.inscricaoDetail());break;case'presenca':c.appendChild(Modules.presenca());break;case'presenca_nova':c.appendChild(Modules.presencaNova());break;case'presenca_ver':c.appendChild(Modules.presencaVer());break;case'settings':c.appendChild(Modules.settings());break;case'reports':c.appendChild(Modules.reports());break;case'parcerias':c.appendChild(Modules.parcerias());break;case'curso':c.appendChild(Modules.curso());break;case'pacotes':c.appendChild(Modules.pacotes());break}repairRenderedEncoding(c)},
+  go(r){this.closeModal();this.currentRoute=r;document.querySelectorAll('.mainnav a').forEach(a=>a.classList.remove('active'));const i=['dashboard','inscricoes','presenca','settings','reports','parcerias','curso','pacotes','analytics'].indexOf(r);const n=document.querySelectorAll('.mainnav a');if(i>=0&&n[i])n[i].classList.add('active');document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));const bottomItem=document.querySelector(`.bottom-nav-item[data-page="${r}"]`);if(bottomItem)bottomItem.classList.add('active');document.querySelectorAll('.drawer-nav-item').forEach(d=>d.classList.remove('active'));const drawerItem=document.querySelector(`.drawer-nav-item[data-page="${r}"]`);if(drawerItem)drawerItem.classList.add('active');this.render()},
+  render(){const c=document.getElementById('app-content');c.innerHTML='';switch(this.currentRoute){case'dashboard':c.appendChild(Modules.dashboard());break;case'inscricoes':c.appendChild(Modules.inscricoes());break;case'inscricao':c.appendChild(Modules.inscricaoDetail());break;case'presenca':c.appendChild(Modules.presenca());break;case'presenca_nova':c.appendChild(Modules.presencaNova());break;case'presenca_ver':c.appendChild(Modules.presencaVer());break;case'settings':c.appendChild(Modules.settings());break;case'reports':c.appendChild(Modules.reports());break;case'parcerias':c.appendChild(Modules.parcerias());break;case'curso':c.appendChild(Modules.curso());break;case'pacotes':c.appendChild(Modules.pacotes());break;case'analytics':c.appendChild(Modules.analytics());break}repairRenderedEncoding(c)},
   openModal(t,b,f){const body=document.getElementById('modalBody');document.getElementById('modalTitle').textContent=t;body.innerHTML=b;document.getElementById('modalFooter').innerHTML=f||'';document.getElementById('modal').classList.add('open');body.scrollTop=0;repairRenderedEncoding(document.getElementById('modal'))},
   closeModal(){document.getElementById('modal').classList.remove('open')},
   globalSearch(term){if(!term||term.length<2)return;const t=normalize(term);const m=DB.load().inscricoes.filter(i=>normalize(i.nome_completo).includes(t)||(i.codigo_referencia&&i.codigo_referencia.toLowerCase().includes(term.toLowerCase())));if(m.length===1){this._detailId=m[0].id;this.currentRoute='inscricao';this.render()}else if(m.length>1){this.currentRoute='inscricoes';this.render();setTimeout(()=>{const inp=document.getElementById('filterNome');if(inp){inp.value=term;Modules.applyFilters()}},50)}},
@@ -1507,6 +1510,15 @@ async reopenInscricao(id){
               </div>
             </div>
             <div class="parceria-card-footer">
+              <button class="btn btn-sm btn-outline" onclick="Modules._editParceria('${p.id}','${p.codigo}','${(p.nome_parceiro||'').replace(/'/g,"\\'")}',${p.percentual_desconto},${p.limite_usos||'null'})" title="Editar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn btn-sm btn-danger-outline" onclick="Modules._deleteParceria('${p.id}','${p.codigo}')" title="Apagar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+              <button class="btn btn-sm btn-whatsapp" onclick="Modules._whatsappParceria('${p.codigo}',${p.percentual_desconto},'${(p.nome_parceiro||'').replace(/'/g,"\\'")}')" title="Enviar no WhatsApp">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              </button>
               <button class="btn btn-sm ${p.ativo?'btn-outline btn-toggle-off':'btn-primary btn-toggle-on'}" onclick="Modules.toggleParceria('${p.id}',${!p.ativo})">
                 ${p.ativo?'Desativar':'Ativar'}
               </button>
@@ -1536,6 +1548,62 @@ async reopenInscricao(id){
     Modules.loadParcerias();
   },
 
+  _editParceria(id,codigo,nome,percentual,limite){
+    const body=`
+      <div class="pacotes-form-grid">
+        <div class="form-group"><label>Código</label><input id="parcEditCodigo" value="${codigo}" style="text-transform:uppercase"></div>
+        <div class="form-group"><label>Nome do Parceiro</label><input id="parcEditNome" value="${nome}"></div>
+        <div class="form-group"><label>Desconto (%)</label><input type="number" id="parcEditPercentual" value="${percentual}" min="1" max="100"></div>
+        <div class="form-group"><label>Limite de usos</label><input type="number" id="parcEditLimite" value="${limite||''}" placeholder="Ilimitado"></div>
+      </div>`;
+    const footer=`
+      <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="Modules._saveEditParceria('${id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar Alterações
+      </button>`;
+    App.openModal('Editar Código de Parceria',body,footer);
+  },
+
+  async _saveEditParceria(id){
+    const codigo=document.getElementById('parcEditCodigo').value.trim().toUpperCase();
+    const nome=document.getElementById('parcEditNome').value.trim();
+    const percentual=Number(document.getElementById('parcEditPercentual').value);
+    const limite=document.getElementById('parcEditLimite').value?Number(document.getElementById('parcEditLimite').value):null;
+    if(!codigo||!nome||!percentual){toast('Preencha código, nome e percentual.');return}
+    const{error}=await supabase.from('codigos_parceria').update({codigo,nome_parceiro:nome,percentual_desconto:percentual,limite_usos:limite}).eq('id',id);
+    if(error){toast('Erro: '+error.message);return}
+    toast('Código atualizado!');
+    App.closeModal();
+    Modules.loadParcerias();
+  },
+
+  _deleteParceria(id,codigo){
+    const body=`<p>Tem certeza que deseja apagar o código <strong>${codigo}</strong>?</p><p class="muted" style="margin-top:8px">Esta ação não pode ser desfeita.</p>`;
+    const footer=`
+      <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="Modules._confirmDeleteParceria('${id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Apagar
+      </button>`;
+    App.openModal('Apagar Código',body,footer);
+  },
+
+  async _confirmDeleteParceria(id){
+    const{error}=await supabase.from('codigos_parceria').delete().eq('id',id);
+    if(error){toast('Erro: '+error.message);return}
+    toast('Código apagado!');
+    App.closeModal();
+    Modules.loadParcerias();
+  },
+
+  _whatsappParceria(codigo,percentual,nome){
+    const inscricaoUrl='https://adesignangola.ao';
+    const msg=`Olá!\n\nA Administração do Curso de Design Gráfico disponibilizou um código de desconto exclusivo para a congregação.\n\n*Código:* ${codigo}\n*Desconto:* ${percentual}%\n*Parceiro:* ${nome}\n\nComo usar:\n1. Acesse a página de inscrição\n2. Preencha os seus dados\n3. No campo "Código de Parceria", insira o código acima\n4. O desconto será aplicado automaticamente\n\nLink de inscrição: ${inscricaoUrl}\n\nQualquer dúvida, é só responder esta mensagem!`;
+    const whatsappUrl=`https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappUrl,'_blank');
+  },
+
   // ========== CURSO ==========
   curso(){
     const db=DB.load();const cfg=db.configuracoes;const div=document.createElement('div');
@@ -1556,9 +1624,6 @@ async reopenInscricao(id){
         <div class="form-group"><label>Ferramentas</label><input id="cfgFerramentas" value="${cfg.ferramentas||''}"></div>
         <div class="form-group"><label>Carga Horária</label><input id="cfgCargaHoraria" value="${cfg.carga_horaria||''}"></div>
         <div class="form-group"><label>Certificado</label><input id="cfgCertificado" value="${cfg.certificado||''}"></div>
-        <div class="form-group"><label>Localização</label><input id="cfgLocalizacao" value="${cfg.localizacao||''}"></div>
-        <div class="form-group"><label>Link da Localização</label><input id="cfgLocalizacaoLink" value="${cfg.localizacao_link||''}" placeholder="https://maps..."></div>
-        <div class="form-group"><label>Horário</label><input id="cfgHorario" value="${cfg.horario||''}"></div>
       </div>
       <div class="curso-section-footer">
         <button class="btn btn-primary" onclick="Modules.saveCursoSettings()">
@@ -1567,6 +1632,12 @@ async reopenInscricao(id){
         </button>
       </div>`;
     div.appendChild(dadosCard);
+
+    // Turmas
+    const turmasCard=document.createElement('div');turmasCard.className='card';turmasCard.id='turmasList';
+    turmasCard.innerHTML=`<div class="curso-section-header"><h3>Turmas</h3><button class="btn btn-primary btn-sm" onclick="Modules._openAddTurmaModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar Turma</button></div><div id="turmasContent"></div>`;
+    div.appendChild(turmasCard);
+    setTimeout(()=>Modules.loadTurmas(),100);
 
     // Módulos
     const modCard=document.createElement('div');modCard.className='card curso-modulos-card';modCard.id='modulosList';
@@ -1931,15 +2002,512 @@ async reopenInscricao(id){
       cfg.ferramentas=document.getElementById('cfgFerramentas').value;
       cfg.carga_horaria=document.getElementById('cfgCargaHoraria').value;
       cfg.certificado=document.getElementById('cfgCertificado').value;
-      cfg.localizacao=document.getElementById('cfgLocalizacao').value;
-      cfg.localizacao_link=document.getElementById('cfgLocalizacaoLink').value;
-      cfg.horario=document.getElementById('cfgHorario').value;
       const{data:cfgRow}=await supabase.from('configuracoes').select('id').limit(1).single();
       if(!cfgRow?.id)throw new Error('Configuração não encontrada');
       const{error}=await supabase.from('configuracoes').update(cfg).eq('id',cfgRow.id);
       if(error)throw error;
       DB.save();toast('Dados do curso guardados!');
     }catch(e){toast('Erro: '+e.message)}
+  },
+
+  // ========== TURMAS ==========
+  async loadTurmas(){
+    const el=document.getElementById('turmasContent');
+    if(!el)return;
+    const{data:turmas,error}=await supabase.from('turmas').select('*,pacotes(nome,slug,vagas,valor)').order('ordem');
+    if(error){el.innerHTML=`<div class="pacotes-empty"><p>Erro ao carregar turmas: ${error.message}</p></div>`;return}
+    if(!turmas||turmas.length===0){
+      el.innerHTML=`<div class="pacotes-empty"><p>Nenhuma turma configurada. Vincula turmas aos pacotes.</p></div>`;
+      return;
+    }
+    const modalCores={online:'b-blue',presencial:'b-green',híbrido:'b-purple'};
+    const modalLabels={online:'Online',presencial:'Presencial',híbrido:'Híbrido'};
+    let html=`<div class="turmas-grid">`;
+    turmas.forEach(t=>{
+      const p=t.pacotes;
+      const cor=modalCores[t.modalidade]||'b-green';
+      html+=`<div class="turma-card ${t.ativo?'':'turma-inactive'}" data-id="${t.id}">
+        <div class="turma-header">
+          <span class="turma-nome">${p?.nome||'Sem pacote'}</span>
+          <div class="turma-actions">
+            <button class="turma-action-btn" onclick="Modules._editTurma('${t.id}')" title="Editar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="turma-action-btn turma-action-danger" onclick="Modules._deleteTurma('${t.id}','${p?.nome||'turma'}')" title="Eliminar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="turma-info">
+          <div class="turma-info-row"><span class="turma-info-label">Dias</span><span>${t.dia_semana}</span></div>
+          <div class="turma-info-row"><span class="turma-info-label">Horário</span><span>${t.hora_inicio} – ${t.hora_fim}</span></div>
+          <div class="turma-info-row"><span class="turma-info-label">Modalidade</span><span class="badge ${cor}">${modalLabels[t.modalidade]||t.modalidade}</span></div>
+          ${t.localizacao?`<div class="turma-info-row"><span class="turma-info-label">Local</span><span>${t.localizacao}</span></div>`:''}
+          ${p?.vagas?`<div class="turma-info-row"><span class="turma-info-label">Vagas</span><span>${p.vagas}</span></div>`:''}
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+    el.innerHTML=html;
+  },
+
+  async _openAddTurmaModal(){
+    const{data:existing}=await supabase.from('turmas').select('pacote_id');
+    const usedIds=(existing||[]).map(t=>t.pacote_id);
+    const{data:pacotes}=await supabase.from('pacotes').select('id,nome,slug').eq('ativo',true).order('valor');
+    const available=(pacotes||[]).filter(p=>!usedIds.includes(p.id));
+    if(available.length===0){
+      toast('Todos os pacotes já têm turma associada.');
+      return;
+    }
+    const body=`
+      <div class="curso-bulk-form">
+        <div class="form-group"><label>Pacote *</label>
+          <select id="turmaPacote">${available.map(p=>`<option value="${p.id}">${p.nome} (${p.slug})</option>`).join('')}</select>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Dia da Semana *</label>
+            <select id="turmaDia">
+              <option value="Segunda e Terça">Segunda e Terça</option>
+              <option value="Segunda e Quarta">Segunda e Quarta</option>
+              <option value="Segunda e Quinta">Segunda e Quinta</option>
+              <option value="Terça e Quarta">Terça e Quarta</option>
+              <option value="Terça e Quinta">Terça e Quinta</option>
+              <option value="Quarta e Quinta">Quarta e Quinta</option>
+              <option value="Segunda, Quarta e Sexta">Segunda, Quarta e Sexta</option>
+              <option value="Terça, Quarta e Quinta">Terça, Quarta e Quinta</option>
+              <option value="Sábado">Sábado</option>
+              <option value="Domingo">Domingo</option>
+              <option value="Diariamente">Diariamente</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1"><label>Modalidade *</label>
+            <select id="turmaModalidade">
+              <option value="presencial">Presencial</option>
+              <option value="online">Online</option>
+              <option value="híbrido">Híbrido</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Hora Início *</label><input id="turmaHoraInicio" type="time" value="19:00"></div>
+          <div class="form-group"><label>Hora Fim *</label><input id="turmaHoraFim" type="time" value="21:00"></div>
+        </div>
+        <div class="form-group"><label>Localização</label><input id="turmaLocal" placeholder="Ex: Luanda, Angola"></div>
+        <div class="form-group"><label>Link da Localização</label><input id="turmaLocalLink" placeholder="https://maps..."></div>
+      </div>`;
+    const footer=`
+      <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="Modules._saveTurma()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Vincular Turma
+      </button>`;
+    App.openModal('Nova Turma',body,footer);
+  },
+
+  async _saveTurma(){
+    const pacote_id=document.getElementById('turmaPacote')?.value;
+    const dia_semana=document.getElementById('turmaDia')?.value;
+    const modalidade=document.getElementById('turmaModalidade')?.value;
+    const hora_inicio=document.getElementById('turmaHoraInicio')?.value;
+    const hora_fim=document.getElementById('turmaHoraFim')?.value;
+    const localizacao=document.getElementById('turmaLocal')?.value?.trim()||'';
+    const localizacao_link=document.getElementById('turmaLocalLink')?.value?.trim()||'';
+    if(!pacote_id||!dia_semana||!modalidade||!hora_inicio||!hora_fim){toast('Preenche todos os campos obrigatórios.');return}
+    const db=DB.load();
+    const turmas=db.turmas||[];
+    const ordem=turmas.length+1;
+    const{data,error}=await supabase.from('turmas').insert({pacote_id,dia_semana,hora_inicio,hora_fim,modalidade,localizacao,localizacao_link,ordem,ativo:true}).select().single();
+    if(error){toast('Erro: '+error.message);return}
+    turmas.push(data);
+    db.turmas=turmas;
+    DB.save();
+    toast('Turma vinculada!');
+    App.closeModal();
+    Modules.loadTurmas();
+  },
+
+  async _editTurma(id){
+    const{data:t}=await supabase.from('turmas').select('*,pacotes(nome,slug)').eq('id',id).single();
+    if(!t)return;
+    const p=t.pacotes;
+    const body=`
+      <div class="curso-bulk-form">
+        <div class="form-group"><label>Pacote</label><input value="${p?.nome||''} (${p?.slug||''})" disabled></div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Dia da Semana *</label>
+            <select id="turmaEditDia">
+              ${['Segunda e Terça','Segunda e Quarta','Segunda e Quinta','Terça e Quarta','Terça e Quinta','Quarta e Quinta','Segunda, Quarta e Sexta','Terça, Quarta e Quinta','Sábado','Domingo','Diariamente'].map(d=>`<option value="${d}"${t.dia_semana===d?' selected':''}>${d}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group" style="flex:1"><label>Modalidade *</label>
+            <select id="turmaEditModalidade">
+              <option value="presencial"${t.modalidade==='presencial'?' selected':''}>Presencial</option>
+              <option value="online"${t.modalidade==='online'?' selected':''}>Online</option>
+              <option value="híbrido"${t.modalidade==='híbrido'?' selected':''}>Híbrido</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Hora Início *</label><input id="turmaEditHoraInicio" type="time" value="${t.hora_inicio}"></div>
+          <div class="form-group"><label>Hora Fim *</label><input id="turmaEditHoraFim" type="time" value="${t.hora_fim}"></div>
+        </div>
+        <div class="form-group"><label>Localização</label><input id="turmaEditLocal" value="${t.localizacao||''}"></div>
+        <div class="form-group"><label>Link da Localização</label><input id="turmaEditLocalLink" value="${t.localizacao_link||''}" placeholder="https://maps..."></div>
+        <div class="form-group"><label>Estado</label>
+          <select id="turmaEditAtivo">
+            <option value="true"${t.ativo?' selected':''}>Ativa</option>
+            <option value="false"${!t.ativo?' selected':''}>Inativa</option>
+          </select>
+        </div>
+      </div>`;
+    const footer=`
+      <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="Modules._saveEditTurma('${id}')">Guardar Alterações</button>`;
+    App.openModal('Editar Turma',body,footer);
+  },
+
+  async _saveEditTurma(id){
+    const dia_semana=document.getElementById('turmaEditDia')?.value;
+    const modalidade=document.getElementById('turmaEditModalidade')?.value;
+    const hora_inicio=document.getElementById('turmaEditHoraInicio')?.value;
+    const hora_fim=document.getElementById('turmaEditHoraFim')?.value;
+    const localizacao=document.getElementById('turmaEditLocal')?.value?.trim()||'';
+    const localizacao_link=document.getElementById('turmaEditLocalLink')?.value?.trim()||'';
+    const ativo=document.getElementById('turmaEditAtivo')?.value==='true';
+    if(!dia_semana||!modalidade||!hora_inicio||!hora_fim){toast('Preenche todos os campos obrigatórios.');return}
+    const{error}=await supabase.from('turmas').update({dia_semana,hora_inicio,hora_fim,modalidade,localizacao,localizacao_link,ativo}).eq('id',id);
+    if(error){toast('Erro: '+error.message);return}
+    toast('Turma atualizada!');
+    App.closeModal();
+    Modules.loadTurmas();
+  },
+
+  _deleteTurma(id,nome){
+    const body=`
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="width:48px;height:48px;background:rgba(239,68,68,.1);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </div>
+        <p style="color:var(--muted);font-size:.88rem">Eliminar turma <b style="color:var(--cream)">"${nome}"</b>?</p>
+        <p style="color:var(--muted);font-size:.78rem;margin-top:4px">Esta ação não pode ser desfeita.</p>
+      </div>`;
+    const footer=`
+      <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="App.closeModal();Modules._doDeleteTurma('${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Eliminar
+      </button>`;
+    App.openModal('Eliminar Turma',body,footer);
+  },
+
+  async _doDeleteTurma(id){
+    const{error}=await supabase.from('turmas').delete().eq('id',id);
+    if(error){toast('Erro: '+error.message);return}
+    const db=DB.load();
+    db.turmas=(db.turmas||[]).filter(t=>t.id!==id);
+    DB.save();
+    toast('Turma eliminada!');
+    Modules.loadTurmas();
+  },
+
+  // ========== ANALYTICS ==========
+  _analyticsTab:'overview',
+  analytics(){
+    const div=document.createElement('div');
+    div.innerHTML=`
+      <div class="card welcome">
+        <div><h2>Analytics Completo</h2><p class="muted">Métricas de audiência, aquisição, comportamento, funil e performance.</p></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="analyticsPeriod" class="filter-input" style="width:auto">
+            <option value="7">7 dias</option>
+            <option value="30" selected>30 dias</option>
+            <option value="90">90 dias</option>
+          </select>
+        </div>
+      </div>
+      <div class="analytics-tabs" id="analyticsTabs" style="display:flex;gap:4px;margin:16px 0;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm atab active" data-tab="overview">Overview</button>
+        <button class="btn btn-ghost btn-sm atab" data-tab="audience">Audiência</button>
+        <button class="btn btn-ghost btn-sm atab" data-tab="acquisition">Aquisição</button>
+        <button class="btn btn-ghost btn-sm atab" data-tab="behavior">Comportamento</button>
+        <button class="btn btn-ghost btn-sm atab" data-tab="funnel">Funil</button>
+        <button class="btn btn-ghost btn-sm atab" data-tab="performance">Performance</button>
+      </div>
+      <div id="analyticsContent" style="min-height:300px"><div class="card" style="text-align:center;padding:40px"><p class="muted">A carregar...</p></div></div>
+    `;
+    setTimeout(()=>{
+      document.querySelectorAll('.atab').forEach(t=>{
+        t.addEventListener('click',()=>{
+          document.querySelectorAll('.atab').forEach(x=>x.classList.remove('active'));
+          t.classList.add('active');
+          this._analyticsTab=t.dataset.tab;
+          this._loadAnalyticsTab();
+        });
+      });
+      document.getElementById('analyticsPeriod').addEventListener('change',()=>this._loadAnalyticsTab());
+      this._loadAnalyticsTab();
+    },30);
+    return div;
+  },
+  async _loadAnalyticsTab(){
+    const el=document.getElementById('analyticsContent');
+    if(!el)return;
+    el.innerHTML=`<div class="card" style="text-align:center;padding:40px"><p class="muted">A carregar...</p></div>`;
+    const period=parseInt(document.getElementById('analyticsPeriod')?.value||30);
+    const empty={events_by_day:[],devices:[],browsers:[],os_list:[],viewports:[],connections:[],languages:[],channels:{direct:0,search:0,social:0,referral:0},utm_sources:[],utm_mediums:[],utm_campaigns:[],referrers:[],landing_pages:[],event_breakdown:[],pages_detail:[],click_elements:[],form_events:[],scroll_distribution:[],steps:[],conversion_rate:0,errors:[],web_vitals:[],performance_summary:{},total_events:0,unique_visitors:0,page_views:0,sessions:0,avg_duration_ms:0,avg_scroll_depth:0,bounce_rate:0,new_visitors:0,returning_visitors:0,error_count:0};
+    try{
+      const tab=this._analyticsTab;
+      let d;
+      if(tab==='overview'){
+        const{data}=await supabase.rpc('get_analytics_overview',{p_days:period});
+        d=data||empty;
+        el.innerHTML='';
+        this._renderOverview(el,d,period);
+      }else if(tab==='audience'){
+        const{data}=await supabase.rpc('get_analytics_audience',{p_days:period});
+        d=data||empty;
+        el.innerHTML='';
+        this._renderAudience(el,d,period);
+      }else if(tab==='acquisition'){
+        const{data}=await supabase.rpc('get_analytics_acquisition',{p_days:period});
+        d=data||empty;
+        el.innerHTML='';
+        this._renderAcquisition(el,d,period);
+      }else if(tab==='behavior'){
+        const{data}=await supabase.rpc('get_analytics_behavior',{p_days:period});
+        d=data||empty;
+        el.innerHTML='';
+        this._renderBehavior(el,d,period);
+      }else if(tab==='funnel'){
+        const{data}=await supabase.rpc('get_analytics_funnel',{p_days:period});
+        d=data||{steps:[],conversion_rate:0};
+        el.innerHTML='';
+        this._renderFunnel(el,d,period);
+      }else if(tab==='performance'){
+        const{data}=await supabase.rpc('get_analytics_performance',{p_days:period});
+        d=data||empty;
+        el.innerHTML='';
+        this._renderPerformance(el,d,period);
+      }
+    }catch(e){
+      el.innerHTML=`<div class="card" style="padding:30px;text-align:center"><p style="color:#e74c3c">Erro: ${escapeHtml(e.message)}</p><p class="muted" style="margin-top:8px">Executa <code>supabase/analytics_setup.sql</code> no Supabase.</p></div>`;
+    }
+  },
+
+  // ── OVERVIEW ──
+  _renderOverview(el,d,p){
+    const days=d.events_by_day||[];
+    const dur=d.avg_duration_ms||0;
+    const durStr=dur>60000?Math.round(dur/60000)+'m '+Math.round((dur%60000)/1000)+'s':Math.round(dur/1000)+'s';
+    const pills=document.createElement('div');pills.className='pills stagger';
+    pills.innerHTML=`
+      <div class="pill-card p-green"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><em>Visitantes Únicos</em><strong>${d.unique_visitors||0}</strong></div></div>
+      <div class="pill-card p-blue"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span><div><em>Page Views</em><strong>${d.page_views||0}</strong></div></div>
+      <div class="pill-card p-pink"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><div><em>Sessões</em><strong>${d.sessions||0}</strong></div></div>
+      <div class="pill-card p-orange"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span><div><em>Rejeição</em><strong>${d.bounce_rate||0}%</strong></div></div>`;
+    el.appendChild(pills);
+
+    const pills2=document.createElement('div');pills2.className='pills stagger';
+    pills2.innerHTML=`
+      <div class="pill-card p-green"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><div><em>Novos</em><strong>${d.new_visitors||0}</strong></div></div>
+      <div class="pill-card p-blue"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><em>Recorrentes</em><strong>${d.returning_visitors||0}</strong></div></div>
+      <div class="pill-card p-pink"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><em>Duração Média</em><strong>${durStr}</strong></div></div>
+      <div class="pill-card p-orange"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/></svg></span><div><em>Scroll Médio</em><strong>${d.avg_scroll_depth||0}%</strong></div></div>`;
+    el.appendChild(pills2);
+
+    const rowA=document.createElement('div');rowA.className='row row-2';
+    rowA.innerHTML=`
+      <div class="card"><h3>Tráfego Diário</h3><p class="muted">Eventos, page views e visitantes nos últimos ${p} dias.</p><div class="chart-box"><canvas id="chOverviewLine"></canvas></div></div>
+      <div class="card"><h3>Novos vs Recorrentes</h3><p class="muted">Proporção de visitantes.</p><div class="rings"><div class="ring"><div class="ring-wrap"><canvas id="chOverviewRing"></canvas><span class="ring-c">${d.unique_visitors||0}</span></div><div><b>Visitantes</b><span>${d.unique_visitors||0}</span></div></div></div><div class="pair" style="margin-top:20px"><div style="text-align:center"><p class="muted">Novos</p><b style="font-size:1.5rem;color:#22a34c">${d.new_visitors||0}</b></div><div style="text-align:center"><p class="muted">Recorrentes</p><b style="font-size:1.5rem;color:#ec407a">${d.returning_visitors||0}</b></div></div></div>`;
+    el.appendChild(rowA);
+    setTimeout(()=>{
+      if(days.length){
+        new Chart(document.getElementById('chOverviewLine'),{type:'line',data:{labels:days.map(x=>x.date?.slice(5)),datasets:[
+          {label:'Page Views',data:days.map(x=>parseInt(x.page_views)||0),borderColor:'#1e88e5',backgroundColor:'rgba(30,136,229,.08)',fill:true,tension:.4,borderWidth:2.5,pointRadius:0},
+          {label:'Visitantes',data:days.map(x=>parseInt(x.visitors)||0),borderColor:'#22a34c',backgroundColor:'rgba(34,163,76,.08)',fill:true,tension:.4,borderWidth:2.5,pointRadius:0}
+        ]},options:{maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:11,weight:'700'}}}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false}}}}});
+      }
+      const nv=d.new_visitors||0;const rv=d.returning_visitors||0;
+      if(nv+rv>0)new Chart(document.getElementById('chOverviewRing'),{type:'doughnut',data:{datasets:[{data:[nv,rv||1],backgroundColor:['#22a34c','#ec407a'],borderWidth:0}]},options:{cutout:'72%',maintainAspectRatio:false,plugins:{tooltip:{enabled:false}}}});
+    },50);
+  },
+
+  // ── AUDIENCE ──
+  _renderAudience(el,d,p){
+    const colors=['#ff4a12','#1e88e5','#22a34c','#fb8c00','#7e57c2','#e91e63','#00897b','#fdd835'];
+    const dev=d.devices||[];const br=d.browsers||[];const os=d.os_list||[];const vp=d.viewports||[];const cn=d.connections||[];const lg=d.languages||[];
+    const totalDev=dev.reduce((s,x)=>s+parseInt(x.count)||0,0);
+    const totalBr=br.reduce((s,x)=>s+parseInt(x.count)||0,0);
+
+    const pillCls=['p-green','p-blue','p-pink','p-orange'];
+    const row0=document.createElement('div');row0.className='pills stagger';
+    row0.innerHTML=dev.map((x,i)=>`<div class="pill-card ${pillCls[i%4]}"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/></svg></span><div><em>${escapeHtml(x.name)}</em><strong>${x.count} <small>(${totalDev?Math.round(parseInt(x.count)*100/totalDev):0}%)</small></strong></div></div>`).join('');
+    el.appendChild(row0);
+
+    const rowA=document.createElement('div');rowA.className='row row-2';
+    rowA.innerHTML=`
+      <div class="card"><h3>Dispositivos</h3><p class="muted">Distribuição por tipo de dispositivo.</p><div class="chart-box"><canvas id="chDevPie"></canvas></div></div>
+      <div class="card"><h3>Navegadores</h3><p class="muted">Top navegadores utilizados.</p><div class="chart-box"><canvas id="chBrPie"></canvas></div></div>`;
+    el.appendChild(rowA);
+
+    const rowB=document.createElement('div');rowB.className='row row-2';
+    rowB.innerHTML=`
+      <div class="card"><h3>Sistemas Operativos</h3><p class="muted">Distribuição por OS.</p><div class="chart-box"><canvas id="chOSPie"></canvas></div></div>
+      <div class="card"><h3>Viewports</h3><p class="muted">Resoluções mais comuns.</p><div class="chart-box"><canvas id="chVPBar"></canvas></div></div>`;
+    el.appendChild(rowB);
+
+    if(cn.length||lg.length){
+      const rowC=document.createElement('div');rowC.className='row row-2';
+      let connHtml='';if(cn.length){connHtml=`<div class="card"><h3>Conexão</h3><table><thead><tr><th>Tipo</th><th style="text-align:right">Visitas</th></tr></thead><tbody>${cn.map((x,i)=>`<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${colors[i%colors.length]};margin-right:6px"></span>${escapeHtml(x.name)}</td><td style="text-align:right"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;}
+      let langHtml='';if(lg.length){langHtml=`<div class="card"><h3>Linguagens</h3><table><thead><tr><th>Idioma</th><th style="text-align:right">Visitas</th></tr></thead><tbody>${lg.map((x,i)=>`<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${colors[i%colors.length]};margin-right:6px"></span>${escapeHtml(x.name)}</td><td style="text-align:right"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;}
+      rowC.innerHTML=connHtml+langHtml;el.appendChild(rowC);
+    }
+
+    setTimeout(()=>{
+      if(dev.length)new Chart(document.getElementById('chDevPie'),{type:'doughnut',data:{labels:dev.map(x=>x.name),datasets:[{data:dev.map(x=>parseInt(x.count)||0),backgroundColor:colors,borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:11}}}}}});
+      if(br.length)new Chart(document.getElementById('chBrPie'),{type:'doughnut',data:{labels:br.map(x=>x.name),datasets:[{data:br.map(x=>parseInt(x.count)||0),backgroundColor:colors,borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:11}}}}}});
+      if(os.length)new Chart(document.getElementById('chOSPie'),{type:'doughnut',data:{labels:os.map(x=>x.name),datasets:[{data:os.map(x=>parseInt(x.count)||0),backgroundColor:colors,borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:11}}}}}});
+      if(vp.length)new Chart(document.getElementById('chVPBar'),{type:'bar',data:{labels:vp.map(x=>x.name),datasets:[{label:'Visitas',data:vp.map(x=>parseInt(x.count)||0),backgroundColor:'#ff4a12',borderRadius:4,barPercentage:.7}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false}}}}});
+    },50);
+  },
+
+  // ── ACQUISITION ──
+  _renderAcquisition(el,d,p){
+    const ch=d.channels||{};
+    const total=(ch.direct||0)+(ch.search||0)+(ch.social||0)+(ch.referral||0);
+    const pct=v=>total?Math.round(v*100/total)+'%':'0%';
+
+    const pills=document.createElement('div');pills.className='pills stagger';
+    pills.innerHTML=`
+      <div class="pill-card p-green"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><div><em>Direto</em><strong>${ch.direct||0} <small>${pct(ch.direct||0)}</small></strong></div></div>
+      <div class="pill-card p-blue"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span><div><em>Pesquisa</em><strong>${ch.search||0} <small>${pct(ch.search||0)}</small></strong></div></div>
+      <div class="pill-card p-pink"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></span><div><em>Social</em><strong>${ch.social||0} <small>${pct(ch.social||0)}</small></strong></div></div>
+      <div class="pill-card p-orange"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/></svg></span><div><em>Referral</em><strong>${ch.referral||0} <small>${pct(ch.referral||0)}</small></strong></div></div>`;
+    el.appendChild(pills);
+
+    const rowA=document.createElement('div');rowA.className='row row-2';
+    rowA.innerHTML=`
+      <div class="card"><h3>Canais de Tráfego</h3><p class="muted">Distribuição por canal.</p><div class="chart-box"><canvas id="chChannelsBar"></canvas></div></div>
+      <div class="card"><h3>Canais — Proporção</h3><p class="muted">Participação de cada canal.</p><div class="chart-box"><canvas id="chChannelsPie"></canvas></div></div>`;
+    el.appendChild(rowA);
+
+    const utm_s=d.utm_sources||[];const refs=d.referrers||[];const lp=d.landing_pages||[];
+    const rowB=document.createElement('div');rowB.className='row row-2';
+    let utmHtml='';if(utm_s.length){utmHtml=`<div class="card"><h3>UTM Sources</h3><table><thead><tr><th>Fonte</th><th style="text-align:right">Visitas</th></tr></thead><tbody>${utm_s.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td style="text-align:right"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;}
+    let refHtml='';if(refs.length){refHtml=`<div class="card"><h3>Top Referrers</h3><table><thead><tr><th>Origem</th><th style="text-align:right">Visitas</th></tr></thead><tbody>${refs.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td style="text-align:right"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;}
+    if(utmHtml||refHtml){rowB.innerHTML=utmHtml+refHtml;el.appendChild(rowB);}
+
+    if(lp.length){
+      const rowC=document.createElement('div');rowC.className='row row-1';
+      rowC.innerHTML=`<div class="card"><h3>Top Landing Pages</h3><table><thead><tr><th>PÁGINA</th><th style="text-align:right">VISITAS</th></tr></thead><tbody>${lp.map(x=>`<tr><td><b>${escapeHtml(x.page||'/')}</b></td><td style="text-align:right;color:#ff4a12">${x.count}</td></tr>`).join('')}</tbody></table></div>`;
+      el.appendChild(rowC);
+    }
+
+    setTimeout(()=>{
+      if(total>0){
+        new Chart(document.getElementById('chChannelsBar'),{type:'bar',data:{labels:['Direto','Pesquisa','Social','Referral'],datasets:[{label:'Visitas',data:[ch.direct||0,ch.search||0,ch.social||0,ch.referral||0],backgroundColor:['#22a34c','#1e88e5','#ec407a','#fb8c00'],borderRadius:4,barPercentage:.7}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false}}}}});
+        new Chart(document.getElementById('chChannelsPie'),{type:'doughnut',data:{labels:['Direto','Pesquisa','Social','Referral'],datasets:[{data:[ch.direct||0,ch.search||0,ch.social||0,ch.referral||0],backgroundColor:['#22a34c','#1e88e5','#ec407a','#fb8c00'],borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyle:'circle',padding:12,font:{size:11}}}}}});
+      }
+    },50);
+  },
+
+  // ── BEHAVIOR ──
+  _renderBehavior(el,d,p){
+    const ev=d.event_breakdown||[];const pg=d.pages_detail||[];const ck=d.click_elements||[];const fm=d.form_events||[];const sc=d.scroll_distribution||[];
+
+    const pillCls=['p-green','p-blue','p-pink','p-orange'];
+    const pills=document.createElement('div');pills.className='pills stagger';
+    pills.innerHTML=ev.slice(0,4).map((x,i)=>{
+      return`<div class="pill-card ${pillCls[i%4]}"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><div><em>${escapeHtml(x.event)}</em><strong>${x.count}</strong></div></div>`;
+    }).join('');
+    el.appendChild(pills);
+
+    const rowA=document.createElement('div');rowA.className='row row-2';
+    rowA.innerHTML=`
+      <div class="card"><h3>Eventos Registados</h3><p class="muted">Distribuição por tipo de evento.</p><div class="chart-box"><canvas id="chEvBar"></canvas></div></div>
+      <div class="card"><h3>Distribuição de Scroll</h3><p class="muted">Profundidade de scroll por sessão.</p><div class="chart-box"><canvas id="chScrollBar"></canvas></div></div>`;
+    el.appendChild(rowA);
+
+    if(pg.length){
+      const rowB=document.createElement('div');rowB.className='row row-1';
+      rowB.innerHTML=`<div class="card"><h3>Páginas — Detalhe</h3><table><thead><tr><th>PÁGINA</th><th style="text-align:right">VISITAS</th><th style="text-align:right">CLIQUES</th><th style="text-align:right">SCROLL</th></tr></thead><tbody>${pg.map(x=>`<tr><td><b>${escapeHtml(x.page||'/')}</b></td><td style="text-align:right;color:#ff4a12">${x.views}</td><td style="text-align:right;color:#1e88e5">${x.clicks}</td><td style="text-align:right;color:#22a34c">${x.scroll_avg||0}%</td></tr>`).join('')}</tbody></table></div>`;
+      el.appendChild(rowB);
+    }
+
+    if(ck.length){
+      const rowC=document.createElement('div');rowC.className='row row-1';
+      rowC.innerHTML=`<div class="card"><h3>Top Cliques</h3><table><thead><tr><th>ELEMENTO</th><th>TAG</th><th style="text-align:right">CLIQUES</th></tr></thead><tbody>${ck.slice(0,10).map(x=>`<tr><td>${escapeHtml(x.element||'')}</td><td>${escapeHtml(x.tag||'')}</td><td style="text-align:right;color:#ff4a12"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;
+      el.appendChild(rowC);
+    }
+
+    setTimeout(()=>{
+      if(ev.length)new Chart(document.getElementById('chEvBar'),{type:'bar',data:{labels:ev.map(x=>x.event),datasets:[{label:'Total',data:ev.map(x=>parseInt(x.count)||0),backgroundColor:'#ff4a12',borderRadius:4,barPercentage:.7}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false}}}}});
+      if(sc.length)new Chart(document.getElementById('chScrollBar'),{type:'bar',data:{labels:sc.map(x=>x.depth+'%'),datasets:[{label:'Sessões',data:sc.map(x=>parseInt(x.count)||0),backgroundColor:'#1e88e5',borderRadius:4,barPercentage:.7}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false}}}}});
+    },50);
+  },
+
+  // ── FUNNEL ──
+  _renderFunnel(el,d,p){
+    const steps=d.steps||[];
+    const pills=document.createElement('div');pills.className='pills stagger';
+    pills.innerHTML=`
+      <div class="pill-card p-green"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><div><em>Visitas</em><strong>${steps[0]?.count||0}</strong></div></div>
+      <div class="pill-card p-blue"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/></svg></span><div><em>Engajamento</em><strong>${steps[1]?.count||0}</strong></div></div>
+      <div class="pill-card p-pink"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6"/></svg></span><div><em>Formulário</em><strong>${steps[2]?.count||0}</strong></div></div>
+      <div class="pill-card p-orange"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><div><em>Inscrições</em><strong>${steps[4]?.count||0} <small style="color:#22a34c">${d.conversion_rate||0}%</small></strong></div></div>`;
+    el.appendChild(pills);
+
+    const rowA=document.createElement('div');rowA.className='row row-2';
+    rowA.innerHTML=`
+      <div class="card"><h3>Funil de Conversão</h3><p class="muted">Das visitas às inscrições — últimos ${p} dias.</p><div class="chart-box"><canvas id="chFunnelBar"></canvas></div></div>
+      <div class="card"><h3>Detalhe por Passo</h3><p class="muted">Drop-off entre cada etapa.</p><table><thead><tr><th>PASSO</th><th style="text-align:right">SESSÕES</th><th style="text-align:right">TAXA</th><th style="text-align:right">DROP-OFF</th></tr></thead><tbody>${steps.map((s,i)=>{
+        const prev=i>0?steps[i-1].count:s.count;
+        const drop=i>0&&prev>0?Math.round((prev-s.count)*100/prev):0;
+        return`<tr><td><b>${i+1}.</b> ${escapeHtml(s.name)}</td><td style="text-align:right;color:#ff4a12"><b>${s.count}</b></td><td style="text-align:right;color:#22a34c">${s.rate}%</td><td style="text-align:right;color:${drop>50?'#e74c3c':'#999'}">${i>0?'-'+drop+'%':'—'}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+    el.appendChild(rowA);
+
+    setTimeout(()=>{
+      if(steps.length){
+        new Chart(document.getElementById('chFunnelBar'),{type:'bar',data:{labels:steps.map(x=>x.name),datasets:[{label:'Sessões',data:steps.map(x=>x.count||0),backgroundColor:['#ff4a12','#fb8c00','#fdd835','#22a34c','#1e88e5'],borderRadius:4,barPercentage:.7}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+      }
+    },50);
+  },
+
+  // ── PERFORMANCE ──
+  _renderPerformance(el,d,p){
+    const ps=d.performance_summary||{};const err=d.errors||[];const wv=d.web_vitals||[];
+
+    const pills=document.createElement('div');pills.className='pills stagger';
+    pills.innerHTML=`
+      <div class="pill-card p-green"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><em>LCP</em><strong>${ps.lcp_avg||'—'} ms</strong></div></div>
+      <div class="pill-card p-blue"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><div><em>FCP</em><strong>${ps.fcp_avg||'—'} ms</strong></div></div>
+      <div class="pill-card p-pink"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></span><div><em>CLS</em><strong>${ps.cls_avg||'—'}</strong></div></div>
+      <div class="pill-card p-orange"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><em>TTFB</em><strong>${ps.ttfb_avg||'—'} ms</strong></div></div>`;
+    el.appendChild(pills);
+
+    if(err.length){
+      const rowA=document.createElement('div');rowA.className='row row-1';
+      rowA.innerHTML=`<div class="card"><h3>Erros Registados <small style="color:#e74c3c">(${ps.total_errors||0})</small></h3><table><thead><tr><th>ERRO</th><th>PÁGINA</th><th style="text-align:right">OCORRÊNCIAS</th></tr></thead><tbody>${err.map(x=>`<tr><td style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(x.message||'')}</td><td>${escapeHtml(x.page||'/')}</td><td style="text-align:right;color:#e74c3c"><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>`;
+      el.appendChild(rowA);
+    }
+
+    if(wv.length){
+      const rowB=document.createElement('div');rowB.className='row row-1';
+      rowB.innerHTML=`<div class="card"><h3>Web Vitals</h3><p class="muted">Métricas de performance capturadas.</p><div class="chart-box"><canvas id="chVitalsLine"></canvas></div></div>`;
+      el.appendChild(rowB);
+      setTimeout(()=>{
+        const labels=wv.map(x=>x.date?.slice(5)+' '+(x.metric||''));
+        new Chart(document.getElementById('chVitalsLine'),{type:'line',data:{labels,datasets:[{label:'Valor',data:wv.map(x=>parseFloat(x.value)||0),borderColor:'#ff4a12',backgroundColor:'rgba(255,74,18,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f3f6'},ticks:{beginAtZero:true}},x:{grid:{display:false},ticks:{maxTicksLimit:8}}}}});
+      },50);
+    }
+
+    if(!err.length&&!wv.length){
+      const row=document.createElement('div');row.className='row row-1';
+      row.innerHTML=`<div class="card" style="text-align:center;padding:40px"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22a34c" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><h3 style="margin-top:12px;color:#22a34c">Tudo funciona bem!</h3><p class="muted">Nenhum erro ou vital problemático detectado.</p></div>`;
+      el.appendChild(row);
+    }
   }
 };
 

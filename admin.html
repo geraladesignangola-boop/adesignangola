@@ -6,7 +6,9 @@
 <meta name="theme-color" content="#143d29">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex, nofollow">
 <title>A.Academy — Painel Administrativo</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -68,6 +70,7 @@
     <a onclick="App.go('parcerias')" id="navParceriasTop">Parcerias</a>
     <a onclick="App.go('curso')" id="navCursoTop">Curso</a>
     <a onclick="App.go('pacotes')" id="navPacotesTop">Pacotes</a>
+    <a onclick="App.go('analytics')" id="navAnalyticsTop" style="color:var(--accent)">Analytics</a>
   </nav>
   <div class="mainnav-overlay" id="mainnavOverlay"></div>
 
@@ -113,6 +116,10 @@
       <a class="drawer-nav-item" onclick="App.go('pacotes'); App.closeDrawer();" data-page="pacotes" id="navPacotes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
         <span>Pacotes</span>
+      </a>
+      <a class="drawer-nav-item" onclick="App.go('analytics'); App.closeDrawer();" data-page="analytics" id="navAnalytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <span>Analytics</span>
       </a>
     </div>
     <div class="drawer-footer">
@@ -181,5 +188,7 @@
 </div>
 
 <script type="module" src="/src/js/admin.js"></script>
+<script src="/src/js/error-tracker.js" defer></script>
+<script src="/src/js/analytics.js" defer></script>
 </body>
 </html>

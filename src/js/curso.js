@@ -7,7 +7,7 @@ async function init(){
   const[cfgRes,modsRes,pacRes]=await Promise.all([
     supabase.from('configuracoes').select('*').limit(1).single(),
     supabase.from('modulos_curso').select('*').order('fase').order('ordem'),
-    supabase.from('pacotes').select('*').eq('ativo',true).order('valor')
+    supabase.from('pacotes').select('*,turmas(*)').eq('ativo',true).order('valor')
   ])
 
   const cfg=cfgRes.data||{}
@@ -113,14 +113,22 @@ function renderPricing(pacs){
   }
   const tags={online:'Online',normal:'Presencial',pro:'Mais Popular'}
   const cors={online:'#0ea5e9',normal:'#ff4311',pro:'#8b5cf6'}
+  const modalCores={online:'#0ea5e9',presencial:'#22c55e',híbrido:'#8b5cf6'}
+  const modalLabels={online:'Online',presencial:'Presencial',híbrido:'Híbrido'}
   wrap.innerHTML=pacs.map(p=>{
     const c=cors[p.slug]||'#ff4311'
     const d=descs[p.slug]||[]
+    const t=p.turmas?.[0]
     return`<div class="curso-price-card" style="border-color:${c}33">
       <span style="display:inline-block;background:${c};color:#fff;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:8px">${tags[p.slug]||p.slug}</span>
       <h3>${p.nome}</h3>
       <div class="curso-price" style="color:${c}">Kz ${Number(p.valor).toLocaleString('pt-BR')}</div>
       <div class="curso-price-sub">ou ${p.parcelas}x de Kz ${Number(p.valor_parcela).toLocaleString('pt-BR')} sem juros</div>
+      ${t?`<div class="curso-turma-inline" style="margin:12px 0;padding:10px;background:${c}0a;border:1px solid ${c}22;border-radius:8px;font-size:.8rem">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="badge" style="background:${modalCores[t.modalidade]||c};font-size:.6rem">${modalLabels[t.modalidade]||t.modalidade}</span></div>
+        <div style="color:var(--muted)">${t.dia_semana} — ${t.hora_inicio} às ${t.hora_fim}</div>
+        ${t.localizacao?`<div style="color:var(--muted);margin-top:2px">${t.localizacao}</div>`:''}
+      </div>`:''}
       <ul>${d.map(i=>`<li>${i}</li>`).join('')}</ul>
       <a href="index.html#inscricao" class="btn btn-primary" style="width:100%;justify-content:center;border-color:${c};background:${c}">Inscrever-me</a>
     </div>`
